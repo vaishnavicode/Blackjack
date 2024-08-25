@@ -210,16 +210,8 @@ function getFileName(cardName: string) {
 
 }
 
-const hitHandler = () => { }
-
-const standHandler = () => { }
-
-
-function optimalStrategy(dealer: string[]) {
-    if (sumOfAll(dealer) <= 16) {
-        return true;
-    }
-
-    return false;
+const hitHandler = () => {
 
 }
+
+const standHandler = () => { }
