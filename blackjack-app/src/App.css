@@ -1,0 +1,31 @@
+.body {
+    margin: 0;
+    height: 100vh;
+    display: grid;
+    place-items: center;
+}
+
+.card-group,
+.card {
+    aspect-ratio: 5/7;
+    width: 30vmin;
+}
+
+.card {
+    width: 30vmin;
+
+    border-radius: 1vmin;
+    position: absolute;
+}
+
+.card:nth-child(3) {
+    transform: translateX(-10%) rotate(-1deg);
+}
+
+.card:nth-child(4) {
+    transform: translateX(-6%) rotate(-3deg);
+}
+
+.card-group:hover>.card:nth-child(3) {
+    transform: translateX(-70%);
+}
