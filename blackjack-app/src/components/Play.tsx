@@ -1,26 +1,57 @@
+import { useState, MouseEvent } from "react";
+
 let cardFiles: { 'Player': string[], 'Dealer': string[] } = { 'Player': [], 'Dealer': [] }
 let cards: { 'Player': string[], 'Dealer': string[] } = { 'Player': [], 'Dealer': [] }
 
-
 function Play() {
 
-    while (cards.Player.length < 2) {
+    const [playerCardCount, updatePlayerCard] = useState(2);
+    const [dealerCardCount, updateDealerCard] = useState(2);
+    let [isGameOver, updateGameOver] = useState(false);
+    let [result, updateResult] = useState('');
+
+    function handleClick(event: MouseEvent<HTMLButtonElement>): void {
+        if ((sumOfAll(cards.Player) > 21) || (sumOfAll(cards.Dealer) > 21)) {
+
+            updateGameOver(isGameOver = true);
+
+        }
+
+        let id = (event.target as HTMLButtonElement).id;
+        id == 'Hit' && updatePlayerCard(playerCardCount + 1);
+
+        let shouldDealerHit = optimalStrategy(cards.Dealer);
+        (id == 'Stand' && shouldDealerHit) && updateDealerCard(dealerCardCount + 1);
+
+
+        (!shouldDealerHit && !optimalStrategy(cards.Dealer)) && updateGameOver(isGameOver = true)
+
+        let resultTemp = checker();
+
+        if (isGameOver) {
+            updateResult(result = resultTemp);
+        }
+
+    }
+
+
+    while (cards.Player.length < playerCardCount) {
 
         let playerCard = getUnique(cards.Player, cards.Dealer);
         let playerfile = getFileName(playerCard);
         cards.Player.push(playerCard);
         cardFiles.Player.push(playerfile)
 
+    }
+
+    while (cards.Dealer.length < dealerCardCount) {
+
         let dealerCard = getUnique(cards.Player, cards.Dealer);
-        let dealerfile = getFileName(playerCard);
+        let dealerfile = getFileName(dealerCard);
         cards.Dealer.push(dealerCard);
         cardFiles.Dealer.push(dealerfile);
     }
 
-
-
-    console.log(cardFiles);
-    console.log(cards);
 
     return (
         <>
@@ -33,7 +64,7 @@ function Play() {
                     {cards['Dealer'].map((cardName, index) => (
                         <div key={index} className="DealerCards">
 
-                            {index == 0 ?
+                            {!isGameOver && index == 0 ?
                                 <>
                                     <h3>Hidden Card</h3>
                                     <img className='card img-responsive' src='cards/RED_BACK.svg'></img>
@@ -66,10 +97,19 @@ function Play() {
 
                 <h3>Player Sum : {sumOfAll(cards.Player)}</h3>
 
-                <button type="button" className="btn btn-success col-md-4" onClick={hitHandler}>Hit</button>
+                <button type="button" className="btn btn-success col-md-4" onClick={handleClick} id='Hit'>Hit</button>
                 &nbsp;&nbsp;
-                <button type="button" className="btn btn-danger col-md-4" onClick={standHandler}>Stand</button>
+                <button type="button" className="btn btn-danger col-md-4" onClick={handleClick} id='Stand'>Stand</button>
 
+
+            </div>
+
+            <div className="final-result">
+                {isGameOver &&
+                    <>
+                        <h1>Result : {result}</h1>
+
+                    </>}
 
             </div>
 
@@ -85,7 +125,6 @@ function Play() {
 
 }
 
-export default Play;
 function getUnique(player: string[], dealer: string[]) {
     let card = generateARandomCard();
 
@@ -210,8 +249,37 @@ function getFileName(cardName: string) {
 
 }
 
-const hitHandler = () => {
+
+function optimalStrategy(dealer: string[]) {
+    if (sumOfAll(dealer) <= 16) {
+        return true;
+    }
+
+    return false;
 
 }
 
-const standHandler = () => { }
+function checker() {
+    let playerSum = sumOfAll(cards.Player);
+    let dealerSum = sumOfAll(cards.Dealer);
+    let resultTemp;
+
+    if (playerSum > 21) {
+        resultTemp = 'Player busted and lost.'
+    }
+    else if (dealerSum > 21) {
+        resultTemp = 'Dealer busted and player won!.'
+    }
+    else if (playerSum == dealerSum) {
+        resultTemp = 'Draw!'
+    }
+    else if (playerSum > dealerSum) {
+        resultTemp = 'Player won!'
+    }
+    else {
+        resultTemp = 'Player lost.'
+    };
+    return resultTemp;
+}
+
+export default Play;
