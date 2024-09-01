@@ -55,12 +55,12 @@ function Play() {
 
     return (
         <>
-            <div className="col-md-4">
+            <div>
 
-                <h1 className="card-title">Dealer Cards : </h1>
+                <h1>Dealer Cards : </h1>
 
 
-                <div className="card-group">
+                <div>
                     {cards['Dealer'].map((cardName, index) => (
                         <div key={index} className="DealerCards">
 
@@ -80,9 +80,9 @@ function Play() {
 
                 </div>
 
-                <h1 className="card-title">Player Cards : </h1>
+                <h1>Player Cards : </h1>
 
-                <div className="card-group">
+                <div>
 
                     {cards['Player'].map((cardName, index) => (
                         <div className="card" key={index}>
